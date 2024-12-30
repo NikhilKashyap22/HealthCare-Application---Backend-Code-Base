@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -68,7 +69,7 @@ public class DoctorScheduleController {
      * @param doctorId The ID of the doctor whose schedule is to be retrieved.
      * @return A ResponseEntity containing the doctor schedule or a 'Not Found' response.
      */
-    @GetMapping("/{doctorId}/get-doctor-by-Id")
+    @GetMapping("/get-schedule-by-Id/{doctorId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> getDoctorScheduleById(@PathVariable String doctorId) {
         try {
@@ -91,7 +92,7 @@ public class DoctorScheduleController {
      * @param doctorScheduleDTO The updated doctor schedule data.
      * @return A ResponseEntity containing the updated doctor schedule or an error message.
      */
-    @PutMapping("/{doctorId}/update-doctor-schedule")
+    @PutMapping("/update-doctor-schedule/{doctorId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> updateDoctorSchedule(@RequestBody DoctorScheduleDTO doctorScheduleDTO){
         try {    		
@@ -111,7 +112,7 @@ public class DoctorScheduleController {
      * @param doctorId The ID of the doctor whose schedule is to be deleted.
      * @return A ResponseEntity with a success or error message.
      */
-    @DeleteMapping("{doctorId}/delete-doctor-schedule")
+    @DeleteMapping("/delete-doctor-schedule/{doctorId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteDoctorSchedule(@PathVariable String doctorId){
         try {    		

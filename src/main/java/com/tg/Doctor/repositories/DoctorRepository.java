@@ -7,3 +7,4 @@ import com.tg.Doctor.models.Doctor;
 public interface DoctorRepository extends JpaRepository<Doctor,String>{
 
 }
+  

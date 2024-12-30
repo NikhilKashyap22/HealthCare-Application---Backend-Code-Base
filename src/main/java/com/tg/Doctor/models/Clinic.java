@@ -2,6 +2,8 @@ package com.tg.Doctor.models;
 
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,17 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Clinic {
 
+    @JsonProperty("id")
 	private String clinicId;
 
-	private String clinicName;
 
-	private String address;
-
-	private String state;
-
-	private String city;
-	
-    private boolean status;
-
+    private Boolean clinicStatus;
 
 }

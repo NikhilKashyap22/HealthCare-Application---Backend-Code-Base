@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.tg.Doctor.models.Address;
-import com.tg.Doctor.models.AvailabilityMode;
 import com.tg.Doctor.models.Experience;
 import com.tg.Doctor.models.Gender;
+import com.tg.Doctor.models.Qualification;
 import com.tg.Doctor.models.Status;
 
 import jakarta.validation.constraints.*;
@@ -81,6 +81,11 @@ public class DoctorDTO {
      */
     @Size(max = 250, message = "Specialization description cannot exceed 250 characters")
     private String specializationDescription;
+    
+    
+    
+    @NotNull(message = "Must specify the clinic you're associated with")
+    private String clinicId;
 
     /**
      * The address of the doctor.
@@ -104,17 +109,16 @@ public class DoctorDTO {
     private Status status;
 
     /**
-     * The availability mode of the doctor.
-     * This field cannot be null.
-     */
-    @NotNull(message = "Must specify the Availability Mode")
-    private AvailabilityMode availabilityMode;
-
-    /**
      * A list of experiences of the doctor.
      * This field cannot be null and must contain at least one experience.
      */
     @NotNull(message = "Must specify Experience")
     private List<Experience> experiences;
+    
+    
+    @NotNull(message = "Have to specify qualification")
+    private List<Qualification> qualifications; 
+    
+   
 
 }

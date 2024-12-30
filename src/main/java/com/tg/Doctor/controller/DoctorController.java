@@ -54,7 +54,7 @@ public class DoctorController {
             Validator.validAge(doctorDTO.getDateOfBirth());
             log.info("Age is valid, doctor is approved!");
             doctorService.addDoctor(doctorDTO);
-            return ResponseEntity.ok("Data saved successfully");
+            return ResponseEntity.ok("Data saved successfully"); 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving data: " + e.getMessage());
         }
@@ -76,14 +76,14 @@ public class DoctorController {
                     .body("Error fetching doctors: " + e.getMessage());
         }
     }
-
+ 
     /**
      * End point to retrieve a doctor by their ID.
      * 
      * @param doctorId the ID of the doctor.
      * @return ResponseEntity containing the doctor details or a 404 NOT_FOUND status if the doctor does not exist.
      */
-    @GetMapping("/{doctorId}/get-doctor-by-Id")
+    @GetMapping("/get-doctor-by-Id/{doctorId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> getDoctorById(@PathVariable String doctorId) {
         try {
@@ -106,7 +106,7 @@ public class DoctorController {
      * @param address the new address details for the doctor.
      * @return ResponseEntity containing the updated doctor details or a 404 NOT_FOUND status if the doctor does not exist.
      */
-    @PutMapping("/{doctorId}/update-doctor-address")
+    @PutMapping("/update-doctor-address/{doctorId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateAddress(@PathVariable String doctorId, @RequestBody Address address) {
         try {
@@ -128,7 +128,7 @@ public class DoctorController {
      * @param doctorId the ID of the doctor to delete.
      * @return ResponseEntity with a status of 200 OK if successful or 404 NOT_FOUND if the doctor does not exist.
      */
-    @DeleteMapping("/{doctorId}/delete-doctor")
+    @DeleteMapping("/delete-doctor/{doctorId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteDoctorById(@PathVariable String doctorId) {
         try {
@@ -151,7 +151,7 @@ public class DoctorController {
      * @param experiences the list of new experience details for the doctor.
      * @return ResponseEntity with status 200 OK if successful, or 404 NOT_FOUND if the doctor does not exist.
      */
-    @PutMapping("/{doctorId}/update-doctor-experience")
+    @PutMapping("/update-doctor-experience/{doctorId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateExperience(@PathVariable String doctorId, @RequestBody List<Experience> experiences) {
         try {

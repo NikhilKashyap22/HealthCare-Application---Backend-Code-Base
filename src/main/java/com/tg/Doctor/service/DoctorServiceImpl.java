@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.tg.Doctor.dtos.DoctorDTO;
 import com.tg.Doctor.exceptions.DoctorAppointmentException;
+import com.tg.Doctor.mappers.DoctorMapper;
 import com.tg.Doctor.models.Address;
 import com.tg.Doctor.models.Doctor;
 import com.tg.Doctor.models.Experience;
-import com.tg.Doctor.models.Specialization;
+//import com.tg.Doctor.models.Specialization;
 import com.tg.Doctor.models.Status;
 import com.tg.Doctor.repositories.DoctorRepository;
 
@@ -26,6 +27,30 @@ public class DoctorServiceImpl implements IDoctorService {
 
     @Autowired
     private DoctorRepository doctorRepository;
+    
+    @Autowired
+    private DoctorMapper doctorMapper;
+    
+    
+    /**
+     * Adds a new doctor to the database.
+     * 
+     * @param doctorDTO the doctor data transfer object containing the doctor's details
+     * @return the saved doctor entity
+     * @throws DoctorAppointmentException if an error occurs while adding the doctor
+     */
+    @Override
+    public Doctor addDoctor(DoctorDTO doctorDTO) {
+    	log.info("Adding a new doctor...");
+    	try {
+    		Doctor doctor = doctorMapper.toDoctor(doctorDTO);
+    		log.info("Saving doctor to Database");
+    		return doctorRepository.save(doctor); 
+    	} catch (Exception ex) {
+    		log.error("Error adding doctor: {}", ex.getMessage(), ex);
+    		throw new DoctorAppointmentException("Error adding doctor", ex);
+    	}
+    }
  
     /**
      * Retrieves all doctors from the database.
@@ -38,7 +63,6 @@ public class DoctorServiceImpl implements IDoctorService {
         log.info("Getting all doctors...");
         try {
             return doctorRepository.findAll();
-
         } catch (Exception ex) {
             log.error("Error getting all doctors: {}", ex.getMessage(), ex);
 
@@ -46,26 +70,6 @@ public class DoctorServiceImpl implements IDoctorService {
         }
     }
 
-    /**
-     * Adds a new doctor to the database.
-     * 
-     * @param doctorDTO the doctor data transfer object containing the doctor's details
-     * @return the saved doctor entity
-     * @throws DoctorAppointmentException if an error occurs while adding the doctor
-     */
-    @Override
-    public Doctor addDoctor(DoctorDTO doctorDTO) {
-        log.info("Adding a new doctor...");
-        try {
-        	Doctor doctor = mapDTO(doctorDTO);
-        	log.info("Saving doctor to Database");
-            return doctorRepository.save(doctor); 
-        } catch (Exception ex) {
-            log.error("Error adding doctor: {}", ex.getMessage(), ex);
-
-            throw new DoctorAppointmentException("Error adding doctor", ex);
-        }
-    }
 
     /**
      * Retrieves a doctor by their ID.
@@ -125,39 +129,5 @@ public class DoctorServiceImpl implements IDoctorService {
         return doctorRepository.save(doctor);
     }
     
-    /**
-     * Maps the provided doctor data transfer object (DTO) to a doctor entity.
-     * 
-     * @param dto the doctor DTO containing the doctor's details
-     * @return the corresponding doctor entity
-     */
-    public Doctor mapDTO(DoctorDTO dto) {
-    	Doctor doctor = new Doctor();
-    	doctor.setFirstName(dto.getFirstName());
-    	doctor.setLastName(dto.getLastName());
-    	doctor.setPhoneNum(dto.getPhoneNum());
-    	doctor.setDateOfBirth(dto.getDateOfBirth());
-    	doctor.setEmail(dto.getEmail());
-    	doctor.setExperienceInYears(dto.getExperienceInYears());
-    	
-    	//Specialization mapping
-    	Specialization specialization = new Specialization();
-    	specialization.setSpecializationType(dto.getSpecializationType());
-    	specialization.setBriefDescription(dto.getSpecializationDescription());    	
-    	
-    	//Setting the specialization object for doctor object
-    	doctor.setSpecialization(specialization);
-    	
-    	doctor.setGender(dto.getGender());
-    	doctor.setStatus(dto.getStatus());
-    	//Address Mapping
-    	doctor.setAddress(dto.getAddress());
-    	//Mode Mapping
-    	doctor.setAvailabilityMode(dto.getAvailabilityMode());
-    	
-    	//Experience Mapping
-    	doctor.setExperiences(dto.getExperiences());
-    	
-    	return doctor;
-    }
+
 }

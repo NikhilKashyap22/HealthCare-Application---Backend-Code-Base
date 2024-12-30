@@ -14,13 +14,13 @@ public class ClinicServiceMockImpl implements IClinicService{
      * @return The availability status of the clinic.
      */
     @Override
-    public boolean getClinicAvailabilityByClinicApi(Clinic clinic) {
+    public boolean getClinicAvailabilityByClinicApi(String clinicId) {
 
         // Mock implementation to set clinic availability status
-        clinic.setStatus(true);
+        clinic.setClinicStatus(true);
 
         // Return the clinic availability status
-        return clinic.isStatus(); 
+        return clinic.getClinicStatus(); 
     }
 
 

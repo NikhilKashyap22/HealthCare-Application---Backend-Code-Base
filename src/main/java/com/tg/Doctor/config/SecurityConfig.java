@@ -42,14 +42,14 @@ public class SecurityConfig {
     public InMemoryUserDetailsManager userDetailsService() {
         UserDetails admin = User.builder()
                 .username("admin")
-                .password(passwordEncoder().encode("admin123")) // Encode the admin password
-                .roles("ADMIN") // Assign ADMIN role to this user
+                .password(passwordEncoder().encode("admin123")) // Encoding the admin password
+                .roles("ADMIN") 
                 .build();
  
         UserDetails user = User.builder()
                 .username("user")
-                .password(passwordEncoder().encode("user123")) // Encode the user password
-                .roles("USER") // Assign USER role to this user
+                .password(passwordEncoder().encode("user123")) // Encoding the user password
+                .roles("USER")
                 .build();
  
         return new InMemoryUserDetailsManager(admin, user);

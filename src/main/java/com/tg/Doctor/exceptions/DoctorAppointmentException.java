@@ -10,3 +10,4 @@ public class DoctorAppointmentException extends RuntimeException {
         super(message, cause);
     }
 }
+ 

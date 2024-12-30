@@ -6,7 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired; // Importing Auto
 import org.springframework.stereotype.Service; // Importing Service annotation to indicate this class as a service
 
 import com.tg.Doctor.dtos.DoctorScheduleDTO;
+import com.tg.Doctor.exceptions.ClinicNotAvailableByThisId;
 import com.tg.Doctor.exceptions.DoctorScheduleProblem;
+import com.tg.Doctor.externalservices.ClinicServiceFactory;
+import com.tg.Doctor.externalservices.IClinicService;
+import com.tg.Doctor.mappers.DoctorMapper;
+import com.tg.Doctor.models.Clinic;
 import com.tg.Doctor.models.DoctorSchedule;
 import com.tg.Doctor.repositories.DoctorScheduleRepository; // Importing AppointmentRepository for data access
 
@@ -20,10 +25,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service // Indicates that this class is a service component
 public class DoctorScheduleServiceImpl implements IDoctorScheduleService {
-
+ 
     @Autowired // Injects DoctorScheduleRepository instance
     private DoctorScheduleRepository doctorScheduleRepository;
+    
+    private final IClinicService clinicService;
+    
+    @Autowired
+    private DoctorMapper doctorMapper;
 
+    
+    public DoctorScheduleServiceImpl() {
+    	this.clinicService = ClinicServiceFactory.create("mock");
+    }
+    
+    
+    
     /**
      * Creates a new doctor schedule.
      * Maps the provided DoctorScheduleDTO to a DoctorSchedule object and saves it to the repository.
@@ -36,7 +53,16 @@ public class DoctorScheduleServiceImpl implements IDoctorScheduleService {
     public DoctorSchedule createDoctorSchedule(DoctorScheduleDTO doctorScheduleDTO) {
         try {
             // Save or share the doctor schedule
-            DoctorSchedule doctorSchedule = mapDoctorScheduleDTO(doctorScheduleDTO);
+//        	Clinic clinic = new Clinic();
+//        	clinic.setClinicId();
+        	boolean isClinicAvailable = clinicService.getClinicAvailabilityByClinicApi(doctorScheduleDTO.getClinicId());
+        	
+        	if(!isClinicAvailable) {
+        		log.info("Clinic is not available for this ID");
+        		throw new ClinicNotAvailableByThisId("Clinic is not available for this ID");
+        	}
+            DoctorSchedule doctorSchedule = doctorMapper.toDoctorSchedule(doctorScheduleDTO);
+            System.out.println("============================================================================================");
             return doctorScheduleRepository.save(doctorSchedule);
         } catch (Exception ex) {
             // Log the error or handle it as per your requirement
@@ -86,9 +112,14 @@ public class DoctorScheduleServiceImpl implements IDoctorScheduleService {
      */
     @Override
     public DoctorSchedule updateDoctorSchedule(DoctorScheduleDTO doctorScheduleDTO) {
-        DoctorSchedule doctorSchedule = doctorScheduleRepository.findById(doctorScheduleDTO.getDoctorId()).orElse(null);
-        doctorSchedule = mapDoctorScheduleDTO(doctorScheduleDTO);
-        return doctorScheduleRepository.save(doctorSchedule);
+    	try {    		
+    		DoctorSchedule doctorSchedule = doctorScheduleRepository.findById(doctorScheduleDTO.getDoctorId()).orElse(null);
+    		doctorSchedule = doctorMapper.toDoctorSchedule(doctorScheduleDTO);
+    		return doctorScheduleRepository.save(doctorSchedule);
+    	} catch(Exception e) {
+    		 log.error("Error while updating doctor schedules: ", e.getMessage(), e);
+             throw new DoctorScheduleProblem("Error while updating doctor schedules", e);
+    	}
     }
 
     /**
@@ -98,23 +129,30 @@ public class DoctorScheduleServiceImpl implements IDoctorScheduleService {
      */
     @Override
     public void deleteDoctorSchedule(String doctorId) {
-        DoctorSchedule doctorSchedule = doctorScheduleRepository.findById(doctorId).orElse(null);
-        doctorScheduleRepository.delete(doctorSchedule);
+    	try {    		
+    		DoctorSchedule doctorSchedule = doctorScheduleRepository.findById(doctorId).orElse(null);
+    		doctorScheduleRepository.delete(doctorSchedule);
+    	} catch (Exception e) {
+    		 log.error("Error while deleting doctor schedules: ", e.getMessage(), e);
+             throw new DoctorScheduleProblem("Error while deleting doctor schedules", e);
+    	}
     }
 
-    /**
-     * Maps a DoctorScheduleDTO to a DoctorSchedule entity.
-     * 
-     * @param doctorScheduleDTO the doctor schedule data transfer object to map
-     * @return a mapped DoctorSchedule entity
-     */
-    public DoctorSchedule mapDoctorScheduleDTO(DoctorScheduleDTO doctorScheduleDTO) {
-        DoctorSchedule doctorSchedule = new DoctorSchedule();
-        doctorSchedule.setName(doctorScheduleDTO.getName());
-        doctorSchedule.setStartTime(doctorScheduleDTO.getStartTime());
-        doctorSchedule.setEndTime(doctorScheduleDTO.getEndTime());
-        doctorSchedule.setDoctorId(doctorScheduleDTO.getDoctorId());
-        doctorSchedule.setWeekDay(doctorScheduleDTO.getWeekDay());
-        return doctorSchedule;
-    }
+//    /**
+//     * Maps a DoctorScheduleDTO to a DoctorSchedule entity.
+//     * 
+//     * @param doctorScheduleDTO the doctor schedule data transfer object to map
+//     * @return a mapped DoctorSchedule entity
+//     */
+//    public DoctorSchedule mapDoctorScheduleDTO(DoctorScheduleDTO doctorScheduleDTO) {
+//        DoctorSchedule doctorSchedule = new DoctorSchedule();
+//        doctorSchedule.setName(doctorScheduleDTO.getName());
+//        doctorSchedule.setStartTime(doctorScheduleDTO.getStartTime());
+//        doctorSchedule.setEndTime(doctorScheduleDTO.getEndTime());
+//        doctorSchedule.setDoctorId(doctorScheduleDTO.getDoctorId());
+//        doctorSchedule.setWeekDay(doctorScheduleDTO.getWeekDay());
+//        doctorSchedule.setAvailabilityMode(doctorScheduleDTO.getAvailabilityMode());
+//        doctorSchedule.setClinicId(doctorScheduleDTO.getClinicId());
+//        return doctorSchedule;
+//    }
 }

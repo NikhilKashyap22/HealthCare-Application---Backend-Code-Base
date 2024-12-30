@@ -43,5 +43,13 @@ public class DoctorSchedule {
 		@Column(name = "end_time")
 		private String endTime;
 		
+	    @Enumerated(EnumType.STRING)
+	    @Column(name = "Availability_Mode")
+	    private AvailabilityMode availabilityMode;
+	    
+	    
+	    private String clinicId;
+
+		
 
 }

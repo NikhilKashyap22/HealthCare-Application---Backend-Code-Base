@@ -16,7 +16,7 @@ public class DoctorScheduleProblem extends RuntimeException{
      *
      * @param message the detail message
      * @param cause   the cause
-     */
+     */ 
     public DoctorScheduleProblem(String message, Throwable cause) {
         super(message, cause);
     }

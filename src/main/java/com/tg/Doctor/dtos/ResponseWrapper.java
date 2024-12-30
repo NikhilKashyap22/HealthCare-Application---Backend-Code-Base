@@ -23,6 +23,6 @@ public class ResponseWrapper<T> {
 	// Constructor with message parameter
 	public ResponseWrapper(String message) {
 		super();
-		this.message = message;
+		this.message = message; 
 	}
 }

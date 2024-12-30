@@ -2,44 +2,49 @@ package com.tg.Doctor.externalservices;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.stereotype.Service;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
-import com.tg.Doctor.models.Clinic;
+import org.springframework.web.client.RestClient;
 
-import org.springframework.http.HttpMethod;
-
-import lombok.extern.slf4j.Slf4j;
-
+@Service
 @Slf4j
 public class ClinicServiceImp implements IClinicService {
 
+    private final RestClient restClient;
 
-	@Autowired
-	private RestTemplate restTemplate;
-	private ResponseEntity<String> clinicResponse;
+    @Value("${clinicApiUrl}")
+    private String clinicApiUrl;
 
-	@Value("${clinicApiUrl}")
-	private String clinicApiUrl;
+    private static final String CLINIC_SERVICE = "clinicService";
 
-	
+    public ClinicServiceImp() {
+        this.restClient = RestClient.builder().build();
+    }
 
-	@Override
-	public boolean getClinicAvailabilityByClinicApi(Clinic clinic) {
+    @Override
+    @CircuitBreaker(name = CLINIC_SERVICE, fallbackMethod = "getClinicAvailabilityFallBack")
+    public boolean getClinicAvailabilityByClinicApi(String clinicId) {
+        boolean status = false;
+        System.out.println("================================================================="+clinicApiUrl);
 
-		boolean status = false;
-        
+        // Build the request URL
+        String url = clinicApiUrl + "/api/Clinic/service/" + clinicId;
+
         // Call the clinic API to get clinic availability
-        clinicResponse = restTemplate.exchange(clinicApiUrl + clinic.getClinicId(), HttpMethod.GET, null,
-                String.class);
+        ResponseEntity<String> clinicResponse = restClient
+                .get()
+                .uri(url)
+                .retrieve()
+                .toEntity(String.class);
 
         // Log the response from the clinic API
-        log.info("Response" + clinicResponse.getBody());
+        log.info("Response: " + clinicResponse.getBody());
 
         // Parse the response and extract clinic availability status
         if (clinicResponse.getBody() != null) {
@@ -53,7 +58,10 @@ public class ClinicServiceImp implements IClinicService {
             }
         }
         return status;
-	}
-	
+    }
 
+    public boolean getClinicAvailabilityFallBack(String clinicId, Throwable throwable) {
+        log.info("Fallback triggered for clinicId: {} due to: {}", clinicId, throwable.getMessage());
+        return false;
+    }
 }

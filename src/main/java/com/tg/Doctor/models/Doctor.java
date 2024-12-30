@@ -43,7 +43,7 @@ public class Doctor {
      */
     @Column(name = "First_Name") 
     private String firstName;
-
+  
     /**
      * Last name of the doctor.
      */
@@ -82,13 +82,6 @@ public class Doctor {
     private Gender gender; // Represents the gender of the doctor
 
     /**
-     * Mode of availability for the doctor (e.g., in-person, online).
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "Availability_Mode")
-    private AvailabilityMode availabilityMode;
-
-    /**
      * Status of the doctor (e.g., active, inactive).
      */
     @Enumerated(EnumType.STRING)
@@ -98,8 +91,8 @@ public class Doctor {
     /**
      * List of clinics where the doctor practices.
      */
-    @ElementCollection
-    private List<Clinic> clinics;
+    @Column(name = "clinicId")
+    private String clinicId;
 
     /**
      * Address of the doctor.
@@ -123,11 +116,6 @@ public class Doctor {
      * List of qualifications the doctor has attained.
      */
     @ElementCollection
-    private List<Qualification> qualifcations;
+    private List<Qualification> qualifications;
 
-    /**
-     * List of testimonials from patients or colleagues about the doctor.
-     */
-    @ElementCollection
-    private List<Testimonial> testimonials;
 }

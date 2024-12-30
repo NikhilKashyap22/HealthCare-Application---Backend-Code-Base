@@ -11,3 +11,4 @@ public interface DoctorScheduleRepository extends JpaRepository<DoctorSchedule, 
     // Method to find appointments by doctorId
     List<DoctorSchedule> findByDoctorId(String doctorId);
 }
+ 

@@ -1,5 +1,6 @@
 package com.tg.Doctor.dtos;
 
+import com.tg.Doctor.models.AvailabilityMode;
 import com.tg.Doctor.models.Days;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -53,4 +54,17 @@ public class DoctorScheduleDTO {
     @NotNull(message = "Doctor ID cannot be null")
     @Size(min = 1, max = 50, message = "Doctor ID must be between 1 and 50 characters")
     private String doctorId;
+    
+    /**
+     * The availability mode of the doctor.
+     * This field cannot be null.
+     */
+    @NotNull(message = "Must specify the Availability Mode")
+    private AvailabilityMode availabilityMode;
+    
+    
+    
+    private String clinicId;
+    
+    
 }
